@@ -74,7 +74,12 @@ QK-norm, tied embeddings, z-loss weight) is a `KotodamaModelConfig` default in
 ## Setup
 
 ```bash
-uv venv .venv && uv pip install --python .venv/bin/python -e ".[training,eval]"
+uv venv .venv
+# torch first, built for your CUDA (the default wheel targets the newest CUDA); e.g. for CUDA 12.8:
+uv pip install --python .venv/bin/python torch --index-url https://download.pytorch.org/whl/cu128
+uv pip install --python .venv/bin/python -e ".[eval]"                          # load, generate, evaluate
+uv pip install --python .venv/bin/python -r requirements-serve.txt             # the OpenAI-compatible server
+uv pip install --python .venv/bin/python -e ".[training,eval]" --no-build-isolation   # training: builds flash-attn against your torch (about 15 minutes)
 cp site.env.example site.env   # optional: data root, venv, caches for this machine
 ```
 
@@ -420,3 +425,15 @@ tests/         CPU test suite
 The suite runs on CPU; GPU-only tests skip without CUDA. Kernel parity checks
 (`scripts/utils/*_parity.py`) and serving batteries
 (`scripts/benchmark/check_*.py`) run standalone on a GPU.
+
+## Citation
+
+```bibtex
+@misc{kotodama_tsumugi_2026,
+  title        = {kotodama-tsumugi-1b: a 1.4B looped base model with block attention residuals},
+  author       = {Luxia and {Anima Labs}},
+  year         = {2026},
+  howpublished = {\url{https://huggingface.co/LuxiaSL/kotodama-tsumugi-1b}},
+  note         = {Code: https://github.com/anima-research/kotodama}
+}
+```
